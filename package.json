@@ -1,0 +1,7 @@
+{
+  "name": "kase-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "KASE AI: investor guide prototype by AAA+ (KASE Championship 2026)",
+  "scripts": { "start": "npx serve ." }
+}

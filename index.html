@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KASE AI — investor guide</title>
+<meta name="description" content="A plain-language guide to Kazakhstan's stock market. Every number comes with its KASE source.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Unbounded:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B2239; --ink2:#2F4558; --mute:#5A6E80; --paper:#EDF3F7; --card:#FFFFFF; --line:#D3DFE8; --grid:rgba(11,34,57,.045);
+  --sky:#00AFCA; --skyd:#00697F; --skyl:#DDF4F8;
+  --gold:#F2B705; --goldl:#FFF0B8; --goldd:#6B4E00;
+  --pos:#0E8A6B; --neg:#C8412F; --idx:#8CA0B3;
+  --display:"Unbounded","Inter Display","Inter",system-ui,sans-serif;
+  --body:"Onest","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;color:var(--ink);font:400 15.5px/1.6 var(--body);}
+button,input,textarea{font:inherit;color:inherit}
+a{color:var(--skyd)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+
+/* header */
+.top{background:var(--ink);color:#fff}
+.top .wrap{display:flex;align-items:center;gap:16px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;margin-right:auto}
+.brand svg{flex:none}
+.brand b{font:600 18px/1 var(--display);letter-spacing:-.01em;display:block}
+.brand small{display:block;color:#A9BCCB;font-size:12.5px;margin-top:5px}
+.seg{display:inline-flex;background:rgba(255,255,255,.1);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;color:#C9D8E3;padding:6px 14px;border-radius:999px;cursor:pointer;font-size:13.5px}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--ink);font-weight:500}
+.live{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#DCE7EF;border-radius:999px;padding:6px 12px 6px 8px;cursor:pointer;font-size:13.5px}
+.live i{width:26px;height:14px;border-radius:99px;background:rgba(255,255,255,.28);position:relative;transition:background .15s}
+.live i::after{content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:#fff;transition:transform .15s}
+.live[aria-checked="true"] i{background:var(--sky)}
+.live[aria-checked="true"] i::after{transform:translateX(12px)}
+.live:disabled{opacity:.55;cursor:not-allowed}
+nav.tabs{background:#fff;border-bottom:1px solid var(--line)}
+nav.tabs .wrap{display:flex;gap:6px;overflow-x:auto}
+nav.tabs button{border:0;background:none;padding:13px 14px 11px;cursor:pointer;color:var(--mute);font-size:15px;border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--ink);font-weight:500;border-bottom-color:var(--gold)}
+.note{font-size:13.5px;color:var(--ink2);padding:10px 0}
+
+/* layout */
+.ask{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:24px;align-items:start;padding-top:8px;padding-bottom:40px}
+.col{min-width:0}
+.hero{padding:34px 0 10px}
+.hero h1{font:500 34px/1.14 var(--display);letter-spacing:-.025em;margin:0 0 14px;max-width:19ch}
+.hero p.lead{font-size:18px;line-height:1.5;color:var(--ink2);max-width:46ch;margin:0 0 22px}
+.promises{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 26px}
+.promises div{border-left:3px solid var(--gold);padding:2px 0 2px 12px;font-size:14px;color:var(--ink2);line-height:1.45}
+.promises b{display:block;color:var(--ink);font-weight:600;font-size:14.5px}
+.sample-h{font:500 13px/1 var(--display);color:var(--mute);margin:0 0 10px;letter-spacing:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;cursor:pointer;font-size:14.5px;color:var(--ink);text-align:left;transition:border-color .12s,background .12s}
+.chip:hover{border-color:var(--skyd);background:var(--skyl)}
+.chip.big{padding:11px 16px;font-size:15px;border-radius:12px}
+
+/* messages */
+#msgs{display:flex;flex-direction:column;gap:18px;padding-top:18px}
+.msg.user{align-self:flex-end;max-width:78%;background:var(--ink);color:#fff;padding:10px 16px;border-radius:16px 16px 4px 16px}
+.msg.ai{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px 16px;box-shadow:0 1px 0 rgba(11,34,57,.04);cursor:default}
+.msg.ai.active{border-color:var(--skyd)}
+.msg-h{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}
+.tag{font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:99px;background:var(--skyl);color:var(--skyd)}
+.tag.warn{background:var(--goldl);color:var(--goldd)}
+.tag.plain{background:#E8EEF3;color:var(--ink2)}
+.fresh{font-size:12.5px;color:var(--mute)}
+.fresh.f1{color:var(--pos)} .fresh.f2{color:var(--goldd)} .fresh.f3{color:var(--neg)}
+.body p{margin:0 0 10px;max-width:68ch}
+.body b{font-weight:600;background:linear-gradient(transparent 64%,var(--goldl) 64%)}
+.cite{display:inline-block;font:500 10.5px/1 var(--body);background:var(--skyl);color:var(--skyd);text-decoration:none;padding:2px 5px 2px;border-radius:5px;margin:0 1px;vertical-align:.5em}
+.nw{white-space:nowrap}
+.cite:hover{background:var(--skyd);color:#fff}
+figure.viz{margin:14px 0 6px;padding:14px 16px 10px;border:1px solid var(--line);border-radius:12px;background:#F8FBFC}
+figure.viz figcaption{font-size:13px;color:var(--mute);margin-top:6px}
+figure.viz .vt{font:500 12.5px/1.3 var(--display);color:var(--ink2);margin:0 0 8px;letter-spacing:0}
+svg.chart{width:100%;height:auto;display:block}
+.ct{font:500 12.5px var(--body);fill:var(--ink2)} .cv{font:600 12.5px var(--body);fill:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stats div{padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:10px}
+.stats b{display:block;font:500 17px/1.2 var(--display);letter-spacing:-.02em;background:none;color:var(--ink)}
+.stats span{display:block;font-size:12.5px;color:var(--mute);margin-top:4px;line-height:1.35}
+details.more{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
+details.more summary{cursor:pointer;font-weight:500;color:var(--skyd);font-size:14.5px;list-style:none}
+details.more summary::before{content:"+";display:inline-block;width:16px;font-weight:600}
+details.more[open] summary::before{content:"–"}
+details.more .xt{margin:10px 0 0}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0 4px}
+.tbl th{text-align:left;font-weight:600;color:var(--ink2);padding:6px 8px;border-bottom:2px solid var(--ink)}
+.tbl td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl .r{text-align:right;font-variant-numeric:tabular-nums}
+.tblnote{font-size:12.5px;color:var(--mute);margin:2px 0 0}
+.tblwrap{overflow-x:auto}
+ul.cav{margin:12px 0 0;padding:8px 12px 8px 14px;list-style:none;border-left:3px solid var(--gold);background:#FFFBEA;border-radius:0 8px 8px 0;font-size:13.5px;color:var(--goldd)}
+ul.cav li{margin:2px 0}
+.foot{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:13px;color:var(--mute);align-items:center}
+.foot .chip{padding:4px 10px;font-size:13px}
+.terms{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;font-size:13px;color:var(--mute);align-items:center}
+.term{border:0;background:none;padding:0 2px;color:var(--skyd);text-decoration:underline dotted;cursor:pointer;font-size:13px}
+.working{display:flex;flex-direction:column;gap:4px;padding:14px 18px;background:#fff;border:1px dashed var(--line);border-radius:14px;color:var(--mute);font-size:14px}
+.working span{opacity:.25;transition:opacity .2s} .working span.on{opacity:1;color:var(--ink2)}
+
+/* composer */
+.composer{position:sticky;bottom:0;background:linear-gradient(transparent,var(--paper) 22%);padding:16px 0 18px;margin-top:8px}
+.composer form{display:flex;gap:10px;background:#fff;border:1.5px solid var(--ink);border-radius:14px;padding:8px 8px 8px 16px;align-items:flex-end;box-shadow:0 4px 0 rgba(11,34,57,.08)}
+.composer textarea{flex:1;border:0;outline:0;resize:none;background:transparent;font-size:16px;line-height:1.5;padding:7px 0;max-height:120px}
+.composer button.send{border:0;background:var(--ink);color:#fff;border-radius:10px;padding:10px 18px;cursor:pointer;font-weight:500}
+.composer button.send:hover{background:var(--skyd)}
+.composer .chips{margin-bottom:10px}
+#nextchips{display:none}
+
+/* trust panel */
+aside.trust{position:sticky;top:16px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;margin-top:18px}
+.trust h2{font:500 14.5px/1.2 var(--display);margin:0 0 12px;letter-spacing:-.01em}
+.trust h3{font-size:13.5px;margin:16px 0 8px;color:var(--ink2);font-weight:600}
+.trust .empty{color:var(--mute);font-size:14px;margin:0}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.steps li{display:grid;grid-template-columns:22px 1fr;gap:10px;font-size:13.5px;line-height:1.4}
+.steps svg{margin-top:1px}
+.steps b{display:block;font-weight:600}
+.steps span{color:var(--mute)}
+.steps li.stop svg circle{fill:var(--gold)}
+.src{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.src li{font-size:13px;line-height:1.35;display:grid;grid-template-columns:34px 1fr;gap:8px;align-items:start}
+.src .cite{vertical-align:baseline;margin:2px 0 0;text-align:center}
+.src small{display:block;color:var(--mute)}
+.badge{display:inline-block;font-size:11.5px;font-weight:600;padding:1px 7px;border-radius:99px;background:#E4F5EE;color:var(--pos);margin-left:4px}
+
+/* other tabs */
+.page{padding-top:28px;padding-bottom:50px}
+.page h2{font:500 24px/1.2 var(--display);letter-spacing:-.02em;margin:0 0 8px}
+.page .sub{color:var(--ink2);max-width:62ch;margin:0 0 22px;font-size:16.5px;line-height:1.5}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.card .big{font:500 24px/1.15 var(--display);letter-spacing:-.025em}
+.card .lab{font-weight:600;margin-top:8px;font-size:15px}
+.card .sub2{font-size:13.5px;color:var(--mute);margin-top:2px}
+.card .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:13px;color:var(--mute)}
+.gl-search{display:flex;gap:10px;margin-bottom:16px}
+.gl-search input{flex:1;max-width:420px;border:1.5px solid var(--ink);border-radius:10px;padding:10px 14px;background:#fff;font-size:16px}
+.gl .card h3{margin:0 0 4px;font-size:16px}
+.gl .card p{margin:0;font-size:14.5px}
+.gl .card .x{margin-top:8px;color:var(--ink2);font-size:13.5px;border-top:1px dashed var(--line);padding-top:8px}
+.gl .card button{margin-top:10px}
+.sec{margin:0 0 34px}
+.sec h3{font:500 17px/1.25 var(--display);margin:0 0 10px;letter-spacing:-.015em}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tick{color:var(--pos);font-weight:600} .cross{color:var(--neg);font-weight:600} .part{color:var(--goldd);font-weight:600}
+.diagram{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;overflow-x:auto}
+.diagram svg{min-width:760px;width:100%;height:auto;display:block}
+.dtxt{font:500 13px var(--body);fill:var(--ink)} .dsub{font:400 11.5px var(--body);fill:var(--mute)}
+footer.site{border-top:1px solid var(--line);background:#fff;color:var(--mute);font-size:13px;padding:16px 0}
+
+@media (max-width:980px){
+  .ask{grid-template-columns:1fr}
+  aside.trust{position:static;margin-top:0}
+  .cards{grid-template-columns:1fr 1fr} .two{grid-template-columns:1fr}
+  .hero h1{font-size:28px}
+}
+@media (max-width:620px){
+  .wrap{padding:0 16px}
+  .promises{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .cards{grid-template-columns:1fr}
+  .msg.user{max-width:92%}
+  .hero{padding-top:22px}
+  .hero h1{font-size:25px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="9" fill="#00AFCA"/><rect x="7" y="19" width="5" height="8" rx="1.5" fill="#0B2239"/><rect x="14.5" y="13" width="5" height="14" rx="1.5" fill="#0B2239"/><rect x="22" y="7" width="5" height="20" rx="1.5" fill="#0B2239"/><circle cx="26.5" cy="6" r="3" fill="#F2B705"/></svg>
+      <div><b>KASE AI</b><small>Investor guide · prototype by AAA+</small></div>
+    </div>
+    <div class="seg" role="group" aria-label="Explanation level">
+      <button type="button" id="m-beginner" aria-pressed="true">Beginner</button>
+      <button type="button" id="m-expert" aria-pressed="false">Experienced</button>
+    </div>
+    <button type="button" class="live" id="live" role="switch" aria-checked="false" disabled title="Checking whether live AI is configured…"><i></i><span id="live-l">Live AI</span></button>
+  </div>
+</header>
+<nav class="tabs" aria-label="Sections">
+  <div class="wrap" role="tablist">
+    <button role="tab" id="t-ask" aria-selected="true" data-tab="ask">Ask</button>
+    <button role="tab" id="t-snap" aria-selected="false" data-tab="snap">Market snapshot</button>
+    <button role="tab" id="t-gl" aria-selected="false" data-tab="gl">Glossary</button>
+    <button role="tab" id="t-how" aria-selected="false" data-tab="how">How it works</button>
+  </div>
+</nav>
+<div class="wrap"><p class="note">Information, not investment advice. Figures come from public KASE pages and other open sources, and were checked on 21 October 2026.</p></div>
+
+<main>
+<!-- ASK -->
+<section id="v-ask" class="wrap ask" aria-label="Ask">
+  <div class="col">
+    <div id="hero" class="hero">
+      <h1>Ask about Kazakhstan’s stock market.</h1>
+      <p class="lead">Plain answers to everyday investor questions. Each number carries a source tag, so you can open the KASE page behind it.</p>
+      <div class="promises">
+        <div><b>Sourced numbers</b>Every figure links to the page it came from, with its date.</div>
+        <div><b>Explains, never advises</b>No “buy” or “sell”. Facts, risks and how things work.</div>
+        <div><b>Says when it doesn’t know</b>No source, no answer. You get where to look instead.</div>
+      </div>
+      <p class="sample-h">Try a question</p>
+      <div class="chips" id="starters"></div>
+    </div>
+    <div id="msgs" aria-live="polite"></div>
+    <div class="composer">
+      <div class="chips" id="nextchips"></div>
+      <form id="form" autocomplete="off">
+        <textarea id="q" rows="1" maxlength="500" placeholder="Ask about shares, bonds, ETFs, the tenge…" aria-label="Your question"></textarea>
+        <button class="send" type="submit">Ask</button>
+      </form>
+    </div>
+  </div>
+  <aside class="trust" aria-label="Trust panel">
+    <h2>Trust panel</h2>
+    <div id="trust"><p class="empty">Sources, data age and the checks behind each answer appear here after you ask.</p></div>
+  </aside>
+</section>
+
+<!-- SNAPSHOT -->
+<section id="v-snap" class="wrap page" hidden aria-label="Market snapshot">
+  <h2>Market snapshot</h2>
+  <p class="sub">Nine numbers that explain where Kazakhstan’s market stands. Each card shows its date and links to the source.</p>
+  <div class="cards" id="cards"></div>
+  <p class="note" style="margin-top:16px">In the full version these cards refresh automatically from KASE data; here they were collected by hand on 21 Oct 2026. “calc” means we calculated it from two published numbers.</p>
+</section>
+
+<!-- GLOSSARY -->
+<section id="v-gl" class="wrap page gl" hidden aria-label="Glossary">
+  <h2>Glossary</h2>
+  <p class="sub">Terms in plain language. Switch to Experienced for the technical detail.</p>
+  <div class="gl-search"><input id="gl-q" type="search" placeholder="Search a term, e.g. coupon" aria-label="Search glossary"></div>
+  <div class="cards" id="gl-cards"></div>
+</section>
+
+<!-- HOW -->
+<section id="v-how" class="wrap page" hidden aria-label="How it works">
+  <h2>How an answer is built</h2>
+  <p class="sub">The assistant answers only from a verified base of KASE and public sources. It checks the question first and attaches sources and data age last.</p>
+
+  <div class="sec">
+    <div class="diagram">
+      <svg viewBox="0 0 900 330" role="img" aria-label="Architecture: question, guardrails, retrieval, composer, answer; below, open sources, ingestion, verified knowledge base">
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5A6E80"/></marker></defs>
+        <g>
+          <rect x="10" y="30" width="140" height="64" rx="12" fill="#fff" stroke="#0B2239" stroke-width="1.5"/><text x="80" y="59" text-anchor="middle" class="dtxt">Investor question</text><text x="80" y="77" text-anchor="middle" class="dtxt dsub">web, KZ / RU / EN</text>
+          <rect x="190" y="30" width="150" height="64" rx="12" fill="#FFF0B8" stroke="#0B2239" stroke-width="1.5"/><text x="265" y="59" text-anchor="middle" class="dtxt">Guardrails</text><text x="265" y="77" text-anchor="middle" class="dtxt dsub">advice · forecast · privacy</text>
+          <rect x="380" y="30" width="150" height="64" rx="12" fill="#fff" stroke="#0B2239" stroke-width="1.5"/><text x="455" y="59" text-anchor="middle" class="dtxt">Retrieval</text><text x="455" y="77" text-anchor="middle" class="dtxt dsub">verified passages only</text>
+          <rect x="570" y="30" width="150" height="64" rx="12" fill="#fff" stroke="#0B2239" stroke-width="1.5"/><text x="645" y="59" text-anchor="middle" class="dtxt">Composer</text><text x="645" y="77" text-anchor="middle" class="dtxt dsub">rules engine or LLM</text>
+          <rect x="760" y="30" width="130" height="64" rx="12" fill="#00AFCA" stroke="#0B2239" stroke-width="1.5"/><text x="825" y="59" text-anchor="middle" class="dtxt">Answer</text><text x="825" y="77" text-anchor="middle" class="dtxt" style="font-weight:400;font-size:11.5px">sources + data age</text>
+        </g>
+        <g stroke="#5A6E80" stroke-width="1.6" fill="none" marker-end="url(#ar)">
+          <path d="M150 62H186"/><path d="M340 62H376"/><path d="M530 62H566"/><path d="M720 62H756"/>
+        </g>
+        <g>
+          <rect x="190" y="220" width="150" height="64" rx="12" fill="#fff" stroke="#0B2239" stroke-width="1.5"/><text x="265" y="249" text-anchor="middle" class="dtxt">Open sources</text><text x="265" y="267" text-anchor="middle" class="dtxt dsub">kase.kz, reviews, news</text>
+          <rect x="380" y="220" width="150" height="64" rx="12" fill="#fff" stroke="#0B2239" stroke-width="1.5"/><text x="455" y="249" text-anchor="middle" class="dtxt">Ingestion</text><text x="455" y="267" text-anchor="middle" class="dtxt dsub">extract · check · date</text>
+          <rect x="570" y="220" width="150" height="64" rx="12" fill="#DDF4F8" stroke="#0B2239" stroke-width="1.5"/><text x="645" y="249" text-anchor="middle" class="dtxt">Verified base</text><text x="645" y="267" text-anchor="middle" class="dtxt dsub">figure · source · date</text>
+          <rect x="10" y="220" width="140" height="64" rx="12" fill="#fff" stroke="#8CA0B3" stroke-width="1.5" stroke-dasharray="5 4"/><text x="80" y="249" text-anchor="middle" class="dtxt">Under agreement</text><text x="80" y="267" text-anchor="middle" class="dtxt dsub">trading results, IRIS</text>
+        </g>
+        <g stroke="#5A6E80" stroke-width="1.6" fill="none" marker-end="url(#ar)">
+          <path d="M340 252H376"/><path d="M530 252H566"/><path d="M645 218V98"/><path d="M150 252H186" stroke-dasharray="5 4"/>
+        </g>
+        <text x="660" y="165" class="dsub">facts</text>
+        <text x="455" y="150" text-anchor="middle" class="dsub">Nothing outside the verified base reaches an answer.</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Why not just search kase.kz or ask a general chatbot?</h3>
+    <div class="tblwrap"><table class="tbl">
+      <thead><tr><th></th><th>kase.kz search</th><th>General chatbot</th><th>KASE AI</th></tr></thead>
+      <tbody>
+        <tr><td>Explains in plain language</td><td class="cross">No — finds documents</td><td class="tick">Yes</td><td class="tick">Yes, beginner and expert level</td></tr>
+        <tr><td>Source for every figure</td><td class="tick">Yes, it is the source</td><td class="cross">Rarely</td><td class="tick">Always, with date</td></tr>
+        <tr><td>Knows Kazakhstan’s current market</td><td class="tick">Yes</td><td class="part">Often outdated</td><td class="tick">Yes, from KASE pages</td></tr>
+        <tr><td>Says “I don’t know”</td><td class="part">Shows empty results</td><td class="cross">Tends to guess</td><td class="tick">Yes, and points to where to look</td></tr>
+        <tr><td>Keeps facts apart from advice</td><td class="tick">Yes</td><td class="cross">Not reliably</td><td class="tick">Built-in boundary</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="sec two">
+    <div>
+      <h3>Data used now (open)</h3>
+      <div class="tblwrap"><table class="tbl" id="open-src"></table></div>
+    </div>
+    <div>
+      <h3>Full version (needs an agreement with KASE)</h3>
+      <div class="tblwrap"><table class="tbl" id="agr-src"></table></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Guardrails in this prototype</h3>
+    <div class="cards">
+      <div class="card"><div class="lab">Advice boundary</div><div class="sub2">Questions like “should I buy…?” get facts and risks, not a recommendation.</div></div>
+      <div class="card"><div class="lab">Forecast boundary</div><div class="sub2">No price or exchange-rate predictions. Only what moved and what sources say.</div></div>
+      <div class="card"><div class="lab">Privacy</div><div class="sub2">Questions never need personal IDs. A 12-digit ID or card-like number is flagged and not processed.</div></div>
+      <div class="card"><div class="lab">Data age</div><div class="sub2">Every answer shows how old its data is and turns amber, then red, as it ages.</div></div>
+      <div class="card"><div class="lab">No source, no answer</div><div class="sub2">Out-of-scope questions get a clear “not verified” and links to KASE sections.</div></div>
+      <div class="card"><div class="lab">Calculated numbers are labelled</div><div class="sub2">Anything we derived (for example, YTD index change) is marked “calc” with its inputs.</div></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site"><div class="wrap">Prototype by AAA+ for the KASE Championship 2026. The storyline is fictitious; this is not an official KASE product.</div></footer>
+
+<script src="kb.js"></script>
+<script>
+(function(){
+"use strict";
+const $ = (s, r) => (r || document).querySelector(s);
+const state = { mode: "beginner", live: false, liveOk: false, model: "", traces: [], busy: false };
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmtDate = (iso) => new Date(iso + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+
+function cite(id){ const s = KB.sources[id]; if(!s) return ""; return '<a class="cite" href="'+esc(s.url)+'" target="_blank" rel="noopener" title="'+esc(s.title+" · "+fmtDate(s.date))+'">'+id+'</a>'; }
+function fmt(t){ return esc(t).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\[(S\d+)\]([.,;:)]*)/g,(m,id,p)=>'<span class="nw">'+cite(id)+p+'</span>'); }
+
+function freshness(entry){
+  if(!entry.asOf) return { cls: "", txt: "General explanation", level: 0 };
+  const d = KB.ageDays(entry.asOf);
+  const cls = d <= 45 ? "f1" : d <= 100 ? "f2" : "f3";
+  const word = d <= 45 ? "fresh" : d <= 100 ? "refresh recommended" : "stale — verify";
+  return { cls, txt: "Data as of " + entry.asOfLabel + " · " + d + " days ago · " + word, level: d <= 45 ? 1 : d <= 100 ? 2 : 3, days: d };
+}
+
+/* ---------- charts ---------- */
+function fmtV(v, unit){ const n = unit==="%" ? Math.abs(v).toFixed(1) : String(Math.abs(v)); return (v<0?"−":(v>0&&unit==="%"?"+":"")) + n + (unit||""); }
+const matched = (hits) => hits.filter(h=>h!=="sample").slice(0,2).join(", ") || "sample question";
+function barsSVG(v){
+  const rows=v.rows, W=560, rowH=26, pad=6, left=76, right=64;
+  const minV=Math.min(0,...rows.map(r=>r[1])), maxV=Math.max(0,...rows.map(r=>r[1])), span=maxV-minV;
+  const plotW=W-left-right, x0=left+(-minV/span)*plotW, H=rows.length*rowH+pad*2;
+  let s='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(v.title)+'">';
+  rows.forEach((r,i)=>{
+    const y=pad+i*rowH, val=r[1], w=Math.abs(val)/span*plotW, x=val>=0?x0:x0-w;
+    const fill = v.plain ? "var(--skyd)" : r[2]==="index" ? "var(--idx)" : val>=0 ? "var(--pos)" : "var(--neg)";
+    s+='<text x="'+(left-8)+'" y="'+(y+rowH/2+4)+'" text-anchor="end" class="ct">'+esc(r[0])+'</text>';
+    s+='<rect x="'+x.toFixed(1)+'" y="'+(y+4)+'" width="'+Math.max(w,1.5).toFixed(1)+'" height="'+(rowH-8)+'" rx="3" fill="'+fill+'"/>';
+    const lx = val>=0 ? x+w+6 : x0+6;
+    s+='<text x="'+lx.toFixed(1)+'" y="'+(y+rowH/2+4)+'" class="cv">'+(v.plain?val.toFixed(1)+(v.unit||""):fmtV(val,v.unit))+'</text>';
+  });
+  s+='<line x1="'+x0.toFixed(1)+'" x2="'+x0.toFixed(1)+'" y1="2" y2="'+(H-2)+'" stroke="#0B2239" stroke-width="1"/></svg>';
+  return s;
+}
+function colsSVG(v){
+  const rows=v.rows, W=560, H=190, left=10, bottom=28, top=26, n=rows.length, gap=14;
+  const bw=(W-left*2-gap*(n-1))/n, max=Math.max(...rows.map(r=>r[1]))*1.12;
+  let s='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(v.title)+'">';
+  rows.forEach((r,i)=>{
+    const h=(r[1]/max)*(H-bottom-top), x=left+i*(bw+gap), y=H-bottom-h, last=i===n-1;
+    s+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="4" fill="'+(last?"var(--skyd)":"#7FD3E2")+'"/>';
+    s+='<text x="'+(x+bw/2).toFixed(1)+'" y="'+(y-7).toFixed(1)+'" text-anchor="middle" class="cv">'+r[1]+'%</text>';
+    s+='<text x="'+(x+bw/2).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle" class="ct">'+esc(r[0])+'</text>';
+  });
+  s+='<line x1="0" x2="'+W+'" y1="'+(H-bottom)+'" y2="'+(H-bottom)+'" stroke="#0B2239"/></svg>';
+  return s;
+}
+function vizHTML(v){
+  if(!v) return "";
+  let inner="", cap="";
+  if(v.type==="bars") inner='<p class="vt">'+esc(v.title)+'</p>'+barsSVG(v);
+  else if(v.type==="cols") inner='<p class="vt">'+esc(v.title)+'</p>'+colsSVG(v);
+  else if(v.type==="stats") inner='<div class="stats">'+v.items.map(i=>'<div><b>'+esc(i[0])+'</b><span>'+esc(i[1])+'</span></div>').join("")+'</div>';
+  else if(v.type==="compare") inner='<div class="tblwrap"><table class="tbl"><thead><tr>'+v.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+v.rows.map(r=>'<tr>'+r.map((c,i)=>'<td'+(i===0?' style="font-weight:600"':'')+'>'+esc(c)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>';
+  if(v.cite||v.note) cap='<figcaption>'+(v.note?esc(v.note)+". ":"")+(v.cite?"Source: "+cite(v.cite):"")+'</figcaption>';
+  return '<figure class="viz">'+inner+cap+'</figure>';
+}
+function tableHTML(t){
+  if(!t) return "";
+  const num=/^[+−×≈\d]/;
+  return '<div class="tblwrap"><table class="tbl"><thead><tr>'+t.cols.map(c=>'<th>'+esc(c)+'</th>').join("")+'</tr></thead><tbody>'+
+    t.rows.map(r=>'<tr>'+r.map((c,i)=>'<td'+(i>0&&num.test(c)&&c.length<14?' class="r"':'')+'>'+esc(c)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>'+
+    (t.note?'<p class="tblnote">'+fmt(t.note)+'</p>':'');
+}
+
+/* ---------- message building ---------- */
+const TAGS = { data:["Source-backed answer",""], mixed:["Explanation + KASE data",""], concept:["Explanation","plain"] };
+function chipBtn(q, extra){ return '<button type="button" class="chip'+(extra||"")+'" data-ask="'+esc(q)+'">'+esc(q)+'</button>'; }
+
+function answerHTML(entry, trace){
+  const f = freshness(entry), tag = TAGS[entry.kind];
+  const expert = state.mode==="expert";
+  const more = (entry.expert && (entry.expert.table || (entry.expert.text||[]).length))
+    ? '<details class="more"'+(expert?' open':'')+'><summary>'+(expert?"The numbers and method":"See the numbers")+'</summary><div class="xt">'+
+      (entry.expert.text||[]).map(t=>'<p>'+fmt(t)+'</p>').join("")+tableHTML(entry.expert.table)+'</div></details>' : "";
+  const terms = (entry.terms||[]).length ? '<div class="terms">Terms: '+entry.terms.map(t=>'<button type="button" class="term" data-term="'+esc(t)+'">'+esc(t)+'</button>').join(" ")+'</div>' : "";
+  const srcs = entry.sources.map(cite).join(" ");
+  const rel = (entry.related||[]).map(id=>KB.entries.find(e=>e.id===id)).filter(Boolean).slice(0,2).map(e=>chipBtn(e.q[0])).join("");
+  return '<div class="msg-h"><span class="tag '+tag[1]+'">'+tag[0]+'</span><span class="fresh '+f.cls+'">'+esc(f.txt)+'</span></div>'+
+    '<div class="body">'+entry.plain.map(p=>'<p>'+fmt(p)+'</p>').join("")+'</div>'+vizHTML(entry.viz)+more+
+    '<ul class="cav">'+entry.caveats.map(c=>'<li>'+fmt(c)+'</li>').join("")+'</ul>'+terms+
+    '<div class="foot"><span>Sources: '+srcs+'</span>'+(rel?'<span>Next:</span>'+rel:"")+'</div>';
+}
+function boundaryHTML(kind){
+  const advice = kind==="advice";
+  const sugg = ["Which shares grew the most over the past year?","What risks come with corporate bonds?","What factors affect share prices?"];
+  return '<div class="msg-h"><span class="tag warn">'+(advice?"Advice boundary":"Forecast boundary")+'</span></div><div class="body">'+
+    (advice
+      ? '<p>I can’t tell you what to buy, sell or hold. That depends on your goals, time horizon and risk tolerance, and I only work from published facts. A licensed broker or investment adviser can help with a personal decision.</p><p>What I can do right now is show the facts behind a decision:</p>'
+      : '<p>I don’t forecast prices or exchange rates. I can show what moved, how much, and what the sources say about it.</p><p>Try one of these:</p>')+
+    '</div><div class="chips" style="margin-top:6px">'+sugg.map(s=>chipBtn(s)).join("")+'</div>';
+}
+function piiHTML(){ return '<div class="msg-h"><span class="tag warn">Privacy</span></div><div class="body"><p>That looks like a personal ID or card number. I never need these and I don’t store them. Remove the number and ask again.</p></div>'; }
+function unknownHTML(){
+  return '<div class="msg-h"><span class="tag warn">No verified answer yet</span></div><div class="body"><p>I don’t have a verified source for that, so I won’t guess. You can look it up directly on KASE:</p><p><a href="https://kase.kz/ru/information/trading-results" target="_blank" rel="noopener">Trading results</a> · <a href="https://kase.kz/ru/indexes-and-indicators/all" target="_blank" rel="noopener">Indices and indicators</a> · <a href="https://kase.kz/en/information/analytics/market" target="_blank" rel="noopener">Analytics and reviews</a></p><p>Or try a question I can answer with sources:</p></div><div class="chips" style="margin-top:4px">'+["Which companies are included in the KASE Index?","What is an ETF?","How do bonds differ from deposits?"].map(s=>chipBtn(s)).join("")+'</div>';
+}
+function greetHTML(){
+  return '<div class="msg-h"><span class="tag plain">Hello</span></div><div class="body"><p>I explain how Kazakhstan’s stock market works and show current figures from KASE, always with a source. I don’t give investment advice.</p><p>Where would you like to start?</p></div><div class="chips" style="margin-top:4px">'+KB.entries.slice(0,4).map(e=>chipBtn(e.q[0])).join("")+'</div>';
+}
+function liveHTML(data){
+  const paras=String(data.answer||"").split(/\n{2,}/).map(p=>'<p>'+fmt(p)+'</p>').join("");
+  const ids=(data.sources||[]).filter(id=>KB.sources[id]);
+  return '<div class="msg-h"><span class="tag">Live AI answer</span><span class="fresh">Written from verified KASE passages</span></div><div class="body">'+paras+'</div>'+
+    '<div class="foot"><span>Sources: '+ids.map(cite).join(" ")+'</span></div>';
+}
+
+/* ---------- trust panel ---------- */
+const CHK='<svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="10" fill="#0E8A6B"/><path d="M6.5 11.5l3 3 6-6.5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const STOP='<svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="10" fill="#F2B705"/><path d="M11 6v6.5M11 15.5v.5" stroke="#0B2239" stroke-width="2.2" stroke-linecap="round"/></svg>';
+function trustHTML(t){
+  if(!t) return '<p class="empty">Sources, data age and the checks behind each answer appear here after you ask.</p>';
+  const step=(ico,b,s,cls)=>'<li class="'+(cls||"")+'">'+ico+'<div><b>'+b+'</b><span>'+s+'</span></div></li>';
+  let steps="";
+  steps+=step(CHK,"Question understood",esc(t.intentText));
+  if(t.entry) steps+=step(CHK,"Verified passage found",esc(t.passages)+(t.sources.length?" · "+t.sources.length+" source"+(t.sources.length>1?"s":""):""));
+  else if(t.skip) steps+=step(CHK,"Retrieval skipped",esc(t.skip));
+  else steps+=step(STOP,"No verified passage","Nothing in the verified base matches, so no answer is generated.","stop");
+  steps+=step(t.guardStop?STOP:CHK,"Guardrails",esc(t.guardText),t.guardStop?"stop":"");
+  if(t.entry||t.live) steps+=step(CHK,"Every figure cited","Each number carries a source tag you can open.");
+  steps+=step(CHK,"Composed",esc(t.engineText));
+  let srcs="";
+  if(t.sources.length){
+    srcs='<h3>Sources</h3><ul class="src">'+t.sources.map(id=>{const s=KB.sources[id];return '<li>'+cite(id)+'<div><a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+esc(s.title)+'</a><small>'+esc(s.pub)+' · '+fmtDate(s.date)+' <span class="badge">open data</span></small></div></li>';}).join("")+'</ul>';
+  }
+  let fr="";
+  if(t.entry){ const f=freshness(t.entry); fr='<h3>Data age</h3><p style="margin:0;font-size:13.5px" class="fresh '+f.cls+'">'+esc(f.txt)+'</p>'; }
+  return '<ul class="steps">'+steps+'</ul>'+fr+srcs;
+}
+function setTrust(i){
+  state.traces.forEach((_,k)=>{ const el=document.getElementById("m"+k); if(el) el.classList.toggle("active",k===i); });
+  $("#trust").innerHTML = trustHTML(state.traces[i]);
+}
+
+/* ---------- ask flow ---------- */
+function addUser(q){ const d=document.createElement("div"); d.className="msg user"; d.textContent=q; $("#msgs").appendChild(d); }
+function addAI(html, trace){
+  const idx=state.traces.length; state.traces.push(trace);
+  const a=document.createElement("article"); a.className="msg ai"; a.id="m"+idx; a.innerHTML=html;
+  a.addEventListener("click",()=>setTrust(idx));
+  $("#msgs").appendChild(a); setTrust(idx);
+  a.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
+}
+const sleep=(ms)=>new Promise(r=>setTimeout(r,reduce?0:ms));
+
+async function ask(q){
+  q=String(q||"").trim(); if(!q||state.busy) return;
+  state.busy=true; $("#hero").hidden=true; addUser(q); $("#q").value=""; resize();
+  const w=document.createElement("div"); w.className="working";
+  w.innerHTML='<span>Checking guardrails…</span><span>Searching verified KASE passages…</span><span>Attaching sources and data age…</span>';
+  $("#msgs").appendChild(w); w.scrollIntoView({block:"end"});
+  const spans=w.querySelectorAll("span");
+  for(let i=0;i<spans.length;i++){ spans[i].classList.add("on"); await sleep(260); }
+
+  const cls=KB.classify(q);
+  const base={ guardStop:false, guardText:"Advice check passed · no personal data detected", passages:"", sources:[], engineText:"Offline verified engine · "+(state.mode==="expert"?"Experienced":"Beginner")+" level" };
+  let html, trace;
+  if(cls.type==="advice"||cls.type==="forecast"){
+    html=boundaryHTML(cls.type); trace=Object.assign(base,{intentText:cls.type==="advice"?"Asks for a personal recommendation":"Asks for a prediction",guardStop:true,guardText:(cls.type==="advice"?"Advice":"Forecast")+" boundary triggered — facts and risks only",engineText:"Fixed boundary response (no model call)",skip:"This reply needs no market facts."});
+  } else if(cls.type==="pii"){
+    html=piiHTML(); trace=Object.assign(base,{intentText:"Message contains a number that looks like an ID or card",guardStop:true,guardText:"Personal data detected — not processed or stored",engineText:"Fixed privacy response",skip:"Message was not processed."});
+  } else if(cls.type==="greeting"){
+    html=greetHTML(); trace=Object.assign(base,{intentText:"Greeting",engineText:"Fixed welcome message",skip:"No market facts requested yet."});
+  } else {
+    const hits=KB.retrieve(q,2);
+    if(state.live && hits.length){
+      try{
+        const r=await fetch("/api/chat",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({q,mode:state.mode})});
+        if(!r.ok) throw new Error("live "+r.status);
+        const data=await r.json();
+        html=liveHTML(data);
+        trace=Object.assign(base,{intentText:hits[0].entry.intent+" (matched: "+matched(hits[0].hits)+")",entry:hits[0].entry,live:true,passages:hits.length+" verified passage"+(hits.length>1?"s":"")+" sent to the model",sources:(data.sources||[]).filter(id=>KB.sources[id]),engineText:"Live AI ("+(data.model||"Claude")+") · "+(state.mode==="expert"?"Experienced":"Beginner")+" level"});
+      }catch(e){ state.live=false; syncLive(); html=null; }
+    }
+    if(!html){
+      if(hits.length){
+        const e=hits[0].entry;
+        html=answerHTML(e);
+        trace=Object.assign(base,{intentText:e.intent+" (matched: "+matched(hits[0].hits)+")",entry:e,passages:"1 passage from "+e.sources.length+" KASE / public pages",sources:e.sources});
+      } else { html=unknownHTML(); trace=Object.assign(base,{intentText:"Outside the verified topics"}); }
+    }
+  }
+  w.remove(); addAI(html,trace); state.busy=false;
+  renderNext(trace.entry);
+}
+function renderNext(entry){
+  const list = entry ? (entry.related||[]).map(id=>KB.entries.find(e=>e.id===id)).filter(Boolean).map(e=>e.q[0]) : [];
+  $("#nextchips").innerHTML = list.slice(0,3).map(s=>chipBtn(s)).join("");
+}
+
+/* ---------- tabs & controls ---------- */
+function showTab(name){
+  ["ask","snap","gl","how"].forEach(t=>{ $("#v-"+t).hidden = t!==name; $("#t-"+t).setAttribute("aria-selected", t===name); });
+  window.scrollTo({top:0});
+}
+document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
+function setMode(m){ state.mode=m; $("#m-beginner").setAttribute("aria-pressed",m==="beginner"); $("#m-expert").setAttribute("aria-pressed",m==="expert"); renderGlossary(); }
+$("#m-beginner").onclick=()=>setMode("beginner"); $("#m-expert").onclick=()=>setMode("expert");
+function syncLive(){ const b=$("#live"); b.setAttribute("aria-checked",state.live); $("#live-l").textContent=state.live?"Live AI on":"Live AI"; }
+$("#live").onclick=()=>{ if(!state.liveOk) return; state.live=!state.live; syncLive(); };
+function resize(){ const t=$("#q"); t.style.height="auto"; t.style.height=Math.min(t.scrollHeight,120)+"px"; }
+$("#q").addEventListener("input",resize);
+$("#q").addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); ask($("#q").value); } });
+$("#form").addEventListener("submit",e=>{ e.preventDefault(); ask($("#q").value); });
+document.addEventListener("click",e=>{
+  const a=e.target.closest("[data-ask]"); if(a){ showTab("ask"); ask(a.dataset.ask); return; }
+  const t=e.target.closest("[data-term]"); if(t){ showTab("gl"); $("#gl-q").value=t.dataset.term; renderGlossary(); }
+});
+
+/* ---------- static views ---------- */
+$("#starters").innerHTML = ["Which shares grew the most over the past year?","Which companies are included in the KASE Index?","What is an ETF?","How do bonds differ from deposits?","What risks come with corporate bonds?","Why did the USD/KZT exchange rate change?","What are dividends and how are they paid?","What factors affect share prices?"].map(s=>chipBtn(s," big")).join("");
+
+function renderSnapshot(){
+  $("#cards").innerHTML = KB.snapshot.map(c=>{ const d=KB.ageDays(c.asOf), cls=d<=45?"f1":d<=100?"f2":"f3";
+    return '<div class="card"><div class="big">'+esc(c.big)+'</div><div class="lab">'+esc(c.label)+'</div><div class="sub2">'+esc(c.sub)+'</div><div class="meta"><span class="fresh '+cls+'">'+esc(c.asOfLabel)+'</span>'+cite(c.src)+'</div></div>'; }).join("");
+}
+function renderGlossary(){
+  const q=($("#gl-q").value||"").toLowerCase().trim(), ex=state.mode==="expert";
+  const list=KB.glossary.filter(g=>!q||g.term.toLowerCase().includes(q)||g.plain.toLowerCase().includes(q));
+  $("#gl-cards").innerHTML = list.length ? list.map(g=>{
+    const e=g.ask?KB.entries.find(x=>x.id===g.ask):null;
+    return '<div class="card"><h3>'+esc(g.term)+'</h3><p>'+fmt(g.plain)+'</p>'+(ex&&g.expert?'<div class="x">'+fmt(g.expert)+'</div>':'')+(e?'<button type="button" class="chip" data-ask="'+esc(e.q[0])+'">Ask about it</button>':'')+'</div>'; }).join("")
+    : '<p class="sub">No term matches “'+esc(q)+'”. Try a shorter word, or ask in the chat.</p>';
+}
+$("#gl-q").addEventListener("input",renderGlossary);
+function srcTable(rows,cols){ return '<thead><tr>'+cols.map(c=>'<th>'+c+'</th>').join("")+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join("")+'</tr>').join("")+'</tbody>'; }
+function renderHow(){
+  const used={}; KB.entries.forEach(e=>e.sources.forEach(s=>used[s]=1));
+  $("#open-src").innerHTML = srcTable(Object.keys(used).sort((a,b)=>+a.slice(1)-+b.slice(1)).map(id=>[cite(id),'<a href="'+esc(KB.sources[id].url)+'" target="_blank" rel="noopener">'+esc(KB.sources[id].title)+'</a>']),["Tag","Source"]);
+  $("#agr-src").innerHTML = srcTable(KB.agreementData.map(a=>[esc(a.name),esc(a.unlocks)]),["Data","What it unlocks"]);
+}
+
+/* ---------- live-mode availability ---------- */
+(async function(){
+  try{
+    const ctl=new AbortController(); const to=setTimeout(()=>ctl.abort(),2500);
+    const r=await fetch("/api/health",{signal:ctl.signal}); clearTimeout(to);
+    if(r.ok){ const j=await r.json(); if(j.live){ state.liveOk=true; state.model=j.model||""; $("#live").disabled=false; $("#live").title="Answer with an AI model, using only verified passages"; return; } }
+  }catch(e){}
+  $("#live").title="Live AI is off: add ANTHROPIC_API_KEY in Vercel to turn it on";
+})();
+
+renderSnapshot(); renderGlossary(); renderHow();
+const params=new URLSearchParams(location.search);
+if(params.get("tab")) showTab(params.get("tab"));
+window.__ask=ask; window.__setMode=setMode;
+})();
+</script>
+</body>
+</html>
